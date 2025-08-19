@@ -5,13 +5,13 @@ on:
         branches:
             - main
         paths:
-            - 's3/**'
+            - 'AWS-S3/**'
 jobs:
      create-s3-bucket:
         runs-on: ubuntu-latest
         defaults:
             run:
-                working-directory: s3 
+                working-directory: AWS-S3
 
         steps:
             - name: checkout code

@@ -1,0 +1,156 @@
+Amazon S3
+
+S3 = Simple Storage Service
+
+It allows you to store and retrieve any amount of data, at any time, from anywhere on the internet.
+
+Instead of traditional file storage, S3 stores data as objects inside buckets.
+
+Key Concepts:
+
+Bucket – A container for objects (like a root folder).
+
+Object – A file + its metadata (data about the file, like size, type).
+
+Key – The unique name that identifies an object in a bucket.
+
+Region – Buckets are created in a specific AWS region.
+
+Storage Classes – Different cost-performance options (Standard, Infrequent Access, Glacier for archiving, etc.).
+
+Features- Highly durable,Scalable,Secure,Accessible.
+
+Think of S3 as a giant online hard drive, but much more reliable, scalable, and secure.
+
+Use S3 when you need cheap, reliable, scalable storage for files, backups, media, logs, or data lakes.
+
+Don’t use it as a database or high-performance file system.
+
+What is S3 Bucket Versioning?
+
+Versioning allows you to keep multiple versions of the same object in a bucket.
+
+Normally, if you upload a file with the same name, it overwrites the old one.
+
+With versioning enabled, S3 keeps all versions — so you can restore, recover, or permanently delete specific versions later.
+
+How Versioning Works
+
+Unversioned bucket (default):
+
+Only the latest object exists.
+
+Overwriting deletes the old one.
+
+Versioning enabled:
+
+Each update creates a new version with a unique VersionID.
+
+Old versions are still kept (not overwritten).
+
+Delete operation:
+
+Instead of deleting permanently, S3 adds a delete marker.
+
+Old versions are still retrievable until explicitly deleted.
+
+Advantages
+
+✅ Protects against accidental overwrites/deletes.
+✅ Helps restore older data easily.
+✅ Useful for auditing & compliance.
+
+🔹 Disadvantages
+
+❌ Increases storage cost (old versions still consume space).
+❌ Can get messy if too many versions exist without lifecycle rules.
+
+cli command of listing all versions-aws s3api list-object-versions --bucket my-bucket-name --prefix myfile.txt
+
+when deleting s3 bucket completely u need to empty the bucket while u are doing this u cant upload any new files
+
+WHAT IS TERRAFORM ?
+
+Terraform is a popular Infrastructure as Code (IaC) tool created by HashiCorp.
+It allows you to define, provision, and manage cloud infrastructure using simple configuration files.
+
+🔹 Key Points About Terraform
+
+Infrastructure as Code (IaC):
+
+You write infrastructure in code (using HashiCorp Configuration Language – HCL).
+
+Example: Instead of manually creating an S3 bucket, you write a Terraform script, and Terraform creates it for you.
+
+
+Works not only with AWS but also Azure, GCP, Kubernetes, VMware, etc.
+
+One tool for managing different platforms.
+
+You describe what you want (e.g., "I need an S3 bucket").
+
+Terraform figures out how to make it happen.
+
+State Management:
+
+Terraform keeps a state file that records the current infrastructure.
+
+This helps track changes and manage updates safely.
+
+🔹 Workflow
+
+Write – Define resources in .tf files (HCL).
+
+Plan – Terraform shows what it will create, change, or destroy.
+
+Apply – Executes the plan and creates/updates infrastructure.
+
+Destroy – Deletes everything when you don’t need it.
+
+to enable versioning in program u need to create resource aws_s3_bucket_versioning and enable it.
+
+to upload files or objects in to s3 you need to create resource aws_s3_object and u need to give key and source values
+which are name of the file in bucket and name of file in local space.
+
+🔹 What is GitHub Actions?
+
+GitHub Actions is a CI/CD (Continuous Integration / Continuous Delivery) platform built into GitHub.
+
+It lets you automate workflows directly from your GitHub repository.
+
+Whenever something happens in your repo (like pushing code, creating a PR, opening an issue),
+
+GitHub Actions can automatically run jobs (build, test, deploy, notifications, etc.)
+
+🔹 Key Features
+
+CI/CD Pipelines:
+
+Build & test your code automatically when you push or open a pull request.
+
+Deploy your app to AWS, Azure, GCP, Docker, Kubernetes, etc.
+
+Event-driven:
+
+Workflows run on triggers (events) like: push ,pull_request ,schedule ,workflow_dispatch 
+
+Reusable Actions:
+
+You can use pre-built actions from the GitHub Marketplace (e.g., setup Node.js, deploy to AWS, run Terraform).
+
+Or create your own custom actions.
+
+Runs in Containers/VMs: Jobs run in GitHub-hosted runners (Ubuntu, Windows, macOS), or you can use your own servers.
+
+🔹 Advantages
+
+✅ Integrated with GitHub (no need for external CI tools).
+✅ Huge community marketplace of prebuilt actions.
+✅ Supports multiple OS (Linux, Windows, macOS).
+✅ Good for automating everything from code tests to infrastructure deployments (Terraform, Docker, Kubernetes, AWS).
+
+🔹 Disadvantages
+
+❌ Limited free usage (2000–3000 minutes/month for free tier).
+❌ Can be slower for very large pipelines compared to dedicated CI systems.
+❌ YAML configs can get complex in big projects.
