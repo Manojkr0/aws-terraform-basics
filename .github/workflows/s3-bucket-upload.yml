@@ -29,6 +29,6 @@ jobs:
             - name: terraform init
               run: terraform init
             - name: terraform plan
-              run: terraform plan -var="bucket_name=manoj8008bucket" -var="region=ap-south-1" -out=tfplan
+              run: terraform plan -var="bucket_name=manoj8008bucket" -var="aws_region=ap-south-1" -out=tfplan
             - name: terraform apply
               run: terraform apply tfplan              
