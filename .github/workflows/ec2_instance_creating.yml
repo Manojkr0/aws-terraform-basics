@@ -1,0 +1,31 @@
+name: creating ec2 instance with terraform
+
+run-name: ${{ github.event.head_commit.message }}
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - 'ec2/**'
+jobs:
+    terraform :
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout code
+              uses: actions/checkout@v4
+            - name: setup terraform
+              uses: hashicorp/setup-terraform@v3
+              with:
+                terraform_version: 1.12.2 
+            - name: configure aws credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ap-south-1      
+            - name: terraform init
+              run: terraform init
+            - name: terraform plan
+              run: terraform plan -var="ami_id=ami-0f918f7e67a3323f0" -var="instance_type=t2.micro" -out=tfplan
+            - name: terraform apply
+              run: terraform apply tfplan     
