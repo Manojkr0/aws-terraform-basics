@@ -24,6 +24,6 @@ jobs:
             - name: terraform init
               run: terraform init
             - name: terraform plan
-              run: terraform plan -var="ami_id=ami-0f918f7e67a3323f0" -var="instance_type=t2.micro" -out=tfplan
+              run: terraform plan -out=tfplan
             - name: terraform apply
               run: terraform apply tfplan     
