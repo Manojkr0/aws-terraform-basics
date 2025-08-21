@@ -5,6 +5,8 @@ on:
     push:
         branches:
             - main
+        paths:
+            - ec2/**
 jobs:
     terraform :
         runs-on: ubuntu-latest
