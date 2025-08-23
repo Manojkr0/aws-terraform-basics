@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: creation vpc with terraform
 on:
   push:
     branches:
