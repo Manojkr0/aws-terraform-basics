@@ -7,7 +7,7 @@ on:
             - main
         paths:
             - ec2/**
-            - '.github/workflows/**'
+            - '.github/workflows/ec2_instance_creating.yml'
         
 jobs:
     terraform :

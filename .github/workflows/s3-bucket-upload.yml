@@ -6,6 +6,7 @@ on:
             - main
         paths:
             - 'AWS-S3/**'
+            - '.github/workflows/s3-bucket-upload.yml'
 jobs:
      create-s3-bucket:
         runs-on: ubuntu-latest

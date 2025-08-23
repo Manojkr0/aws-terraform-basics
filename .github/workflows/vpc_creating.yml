@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'AWS-VPC/**'
+      - '.github/workflows/vpc_creating.yml'
 
 jobs:
   terraform:
