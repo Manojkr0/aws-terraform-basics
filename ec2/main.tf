@@ -13,6 +13,7 @@ data "aws_vpc" "custom" {
 }
 data "aws_subnet" "public" {
   id = "subnet-086d28cc86c8fb75a"
+  
 }
 data "aws_subnet" "private" {
   id = "subnet-0462351fe9a751ed9"
