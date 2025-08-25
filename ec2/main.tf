@@ -1,10 +1,61 @@
-resource "aws_instance""ec2" {
+# resource "aws_instance""ec2" {
+#   ami           = var.ami_id
+#   instance_type = var.instance_type
+#   subnet_id = var.subnet_id
+#   security_groups = [var.security_group]
+
+#   tags = {
+#     Name = "MyEC2Instance"
+#   }
+# }
+data "aws_vpc" "default" {
+  default = true
+}
+data "aws_subnet" "public" {
+  filter {
+    name   = "tag:Name"
+    values = ["public-subnet"]   
+  }
+  vpc_id = data.aws_vpc.default.id
+}
+data "aws_subnet" "private" {
+  filter {
+    name   = "tag:Name"
+    values = ["private-subnet"] 
+  }
+  vpc_id = data.aws_vpc.default.id
+}
+data "aws_security_group" "existing" {
+  filter {
+    name   = "group-name"
+    values = ["default"]  
+  }
+  vpc_id = data.aws_vpc.default.id
+}
+resource "aws_instance" "public_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
-  subnet_id = var.subnet_id
-  security_groups = [var.security_group]
+
+  subnet_id = data.aws_subnet.public.id
+  vpc_security_group_ids = [data.aws_security_group.default.id]
+
+  associate_public_ip_address = true  
 
   tags = {
-    Name = "MyEC2Instance"
+    Name = "Public-EC2"
+  }
+}
+
+resource "aws_instance" "private_ec2" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+
+  subnet_id = data.aws_subnet.private.id
+  vpc_security_group_ids = [data.aws_security_group.default.id]
+
+  associate_public_ip_address = false 
+
+  tags = {
+    Name = "Private-EC2"
   }
 }
