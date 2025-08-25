@@ -28,19 +28,20 @@ data "aws_subnet" "private" {
   }
   vpc_id = data.aws_vpc.custom.id
 }
-data "aws_security_group" "existing" {
-  filter {
-    name   = "group-name"
-    values = ["default"]
+data "terraform_remote_state" "sg" {
+  backend = "s3"
+  config = {
+    bucket = "terraformbackupmanoj6303"
+    key    = "sg/sg.tfstate"
+    region = "us-west-2"
   }
-  vpc_id = data.aws_vpc.custom.id
 }
 resource "aws_instance" "public_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
 
   subnet_id              = data.aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.SG.id]
+  vpc_security_group_ids = [data.terraform_remote_state.sg.outputs.sg_id]
 
 
   associate_public_ip_address = true
@@ -54,7 +55,7 @@ resource "aws_instance" "private_ec2" {
   instance_type = var.instance_type
 
   subnet_id              = data.aws_subnet.private.id
-  vpc_security_group_ids = [data.aws_security_group.existing.id]
+  vpc_security_group_ids = [data.terraform_remote_state.sg.outputs.sg_id]
 
   associate_public_ip_address = false
 

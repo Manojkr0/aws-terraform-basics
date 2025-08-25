@@ -37,3 +37,6 @@ resource "aws_security_group" "SG" {
     Name ="security-group"
   }
 }
+output "sg_id" {
+  value = aws_security_group.SG.id
+}
