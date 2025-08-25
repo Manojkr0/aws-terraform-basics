@@ -9,14 +9,24 @@
 #   }
 # }
 data "aws_vpc" "custom" {
-  id = "vpc-07c2949af07af0978"
+  filter {
+    name   = "tag:Name"
+    values = ["vpc-basics"]   
+  }
 }
 data "aws_subnet" "public" {
-  id = "subnet-086d28cc86c8fb75a"
-  
+  filter {
+    name   = "tag:Name"
+    values = ["public-subnet"]   
+  }
+  vpc_id = data.aws_vpc.custom.id
 }
 data "aws_subnet" "private" {
-  id = "subnet-0462351fe9a751ed9"
+  filter {
+    name   = "tag:Name"
+    values = ["private-subnet"]  
+  }
+  vpc_id = data.aws_vpc.custom.id
 }
 data "aws_security_group" "existing" {
   filter {
@@ -25,7 +35,6 @@ data "aws_security_group" "existing" {
   }
   vpc_id = data.aws_vpc.custom.id
 }
-
 resource "aws_instance" "public_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
@@ -39,7 +48,6 @@ resource "aws_instance" "public_ec2" {
     Name = "Public-EC2"
   }
 }
-
 resource "aws_instance" "private_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
@@ -53,3 +61,4 @@ resource "aws_instance" "private_ec2" {
     Name = "Private-EC2"
   }
 }
+
