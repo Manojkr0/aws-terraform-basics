@@ -8,38 +8,38 @@
 #     Name = "MyEC2Instance"
 #   }
 # }
-data "aws_vpc" "default" {
-  default = true
+# Fetch custom VPC (vpc-basics)
+data "aws_vpc" "custom" {
+  id = "vpc-07c2949af07af0978"
 }
+
+# Public subnet (by tag)
 data "aws_subnet" "public" {
-  filter {
-    name   = "tag:Name"
-    values = ["public-subnet"]   
-  }
-  vpc_id = data.aws_vpc.default.id
+  id = "subnet-086d28cc86c8fb75a"
 }
+
+# Private subnet (by tag)
 data "aws_subnet" "private" {
-  filter {
-    name   = "tag:Name"
-    values = ["private-subnet"] 
-  }
-  vpc_id = data.aws_vpc.default.id
+  id = "subnet-0462351fe9a751ed9"
 }
+
+# Existing security group (use default SG from custom VPC)
 data "aws_security_group" "existing" {
   filter {
     name   = "group-name"
-    values = ["default"]  
+    values = ["default"]
   }
-  vpc_id = data.aws_vpc.default.id
+  vpc_id = data.aws_vpc.custom.id
 }
+
 resource "aws_instance" "public_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
 
-  subnet_id = data.aws_subnet.public.id
+  subnet_id              = data.aws_subnet.public.id
   vpc_security_group_ids = [data.aws_security_group.existing.id]
 
-  associate_public_ip_address = true  
+  associate_public_ip_address = true
 
   tags = {
     Name = "Public-EC2"
@@ -50,10 +50,10 @@ resource "aws_instance" "private_ec2" {
   ami           = var.ami_id
   instance_type = var.instance_type
 
-  subnet_id = data.aws_subnet.private.id
+  subnet_id              = data.aws_subnet.private.id
   vpc_security_group_ids = [data.aws_security_group.existing.id]
 
-  associate_public_ip_address = false 
+  associate_public_ip_address = false
 
   tags = {
     Name = "Private-EC2"
