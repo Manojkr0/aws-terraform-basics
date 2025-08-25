@@ -32,7 +32,7 @@ data "terraform_remote_state" "sg" {
   backend = "s3"
   config = {
     bucket = "terraformbackupmanoj6303"
-    key    = "sg/sg.tfstate"
+    key    = "security-group/sg.tfstate"
     region = "us-west-2"
   }
 }
