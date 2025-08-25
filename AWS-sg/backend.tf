@@ -4,7 +4,7 @@ terraform {
   backend "s3" {
     bucket         = "terraformbackupmanoj6303"  
     key            = "security-group/sg.tfstate"  
-    region         = "ap-south-1"                 
+    region         = "us-west-2"                 
     encrypt        = true
   }
 }
