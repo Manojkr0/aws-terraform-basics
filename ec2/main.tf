@@ -37,7 +37,7 @@ resource "aws_instance" "public_ec2" {
   instance_type = var.instance_type
 
   subnet_id = data.aws_subnet.public.id
-  vpc_security_group_ids = [data.aws_security_group.default.id]
+  vpc_security_group_ids = [data.aws_security_group.existing.id]
 
   associate_public_ip_address = true  
 
@@ -51,7 +51,7 @@ resource "aws_instance" "private_ec2" {
   instance_type = var.instance_type
 
   subnet_id = data.aws_subnet.private.id
-  vpc_security_group_ids = [data.aws_security_group.default.id]
+  vpc_security_group_ids = [data.aws_security_group.existing.id]
 
   associate_public_ip_address = false 
 
