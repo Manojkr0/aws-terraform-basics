@@ -8,22 +8,15 @@
 #     Name = "MyEC2Instance"
 #   }
 # }
-# Fetch custom VPC (vpc-basics)
 data "aws_vpc" "custom" {
   id = "vpc-07c2949af07af0978"
 }
-
-# Public subnet (by tag)
 data "aws_subnet" "public" {
   id = "subnet-086d28cc86c8fb75a"
 }
-
-# Private subnet (by tag)
 data "aws_subnet" "private" {
   id = "subnet-0462351fe9a751ed9"
 }
-
-# Existing security group (use default SG from custom VPC)
 data "aws_security_group" "existing" {
   filter {
     name   = "group-name"
