@@ -1,0 +1,224 @@
+✅ Steps to Manually Create an Application Load Balancer (ALB)
+1. Login to AWS Console
+
+Go to EC2 service in the AWS Management Console.
+
+On the left menu, choose Load Balancers → click Create Load Balancer.
+
+2. Select Load Balancer Type
+
+You’ll see 3 options:
+
+Application Load Balancer (ALB) → Works at Layer 7 (HTTP/HTTPS) → for web apps.
+
+Network Load Balancer (NLB) → Works at Layer 4 (TCP/UDP) → for high-performance, low-latency.
+
+Classic Load Balancer (ELB) → Old version, not recommended for new apps.
+
+👉 Choose Application Load Balancer (common for web apps).
+
+3. Configure Load Balancer
+
+Name → e.g., my-alb.
+
+Scheme → choose Internet-facing (if public) or Internal (for private apps).
+
+IP address type → IPv4 (default).
+
+Listeners → Keep HTTP : 80. (You can add HTTPS : 443 if you have SSL cert).
+
+4. Choose Network & Security
+
+Select a VPC.
+
+Pick at least 2 subnets from different Availability Zones for high availability.
+
+Choose a Security Group that allows inbound traffic on port 80/443.
+
+5. Configure Target Group
+
+A Target Group defines which EC2 instances the ALB forwards traffic to.
+
+Create a new target group:
+
+Target Type → Instances (for EC2) or IP (for IP addresses) or Lambda.
+
+Protocol/Port → HTTP : 80.
+
+Health Checks → HTTP / (you can change path, e.g., /health).
+
+6. Register Targets (EC2 Instances)
+
+Select the EC2 instances you want to forward traffic to.
+
+Add them to the target group.
+
+Each instance must allow traffic on port 80 in its security group.
+
+7. Review and Create
+
+Review all details → Click Create Load Balancer.
+
+Wait until the State changes to Active.
+
+8. Test the Load Balancer
+
+Copy the DNS name of the ALB from the AWS console (e.g., my-alb-123456.ap-south-1.elb.amazonaws.com).
+
+Paste it in a browser → it should forward traffic to your EC2 instances.
+
+If you have multiple instances, try stopping one → ALB will send traffic only to healthy ones.
+
+🔹 Classic ELB (Old)
+
+Very similar, but fewer features (no path-based routing, no host-based rules).
+
+🔹 Network Load Balancer
+
+Follows almost the same steps, but operates at TCP/UDP level instead of HTTP.
+
+🔹 What is a Load Balancer?
+
+A Load Balancer (LB) is a networking service that automatically distributes incoming traffic across multiple servers (EC2 instances, containers, or even IPs) to improve availability, scalability, and fault tolerance.
+
+Think of it like a traffic police officer at a busy intersection 🚦 — it decides which car (user request) should go to which lane (server) so that no single server is overloaded.
+
+🔹 Why use a Load Balancer?
+
+High Availability → If one server goes down, traffic is routed to healthy servers.
+
+Scalability → As demand increases, you can add more servers, and the LB will balance traffic automatically.
+
+Fault Tolerance → LB runs health checks and removes unhealthy servers.
+
+Security → Can act as a single entry point, with SSL termination, WAF, etc.
+
+Performance → Spreads load evenly, reducing response times.
+
+🔹 Types of Load Balancers in AWS
+
+AWS provides Elastic Load Balancing (ELB) with different types:
+
+Application Load Balancer (ALB)
+
+Operates at Layer 7 (HTTP/HTTPS).
+
+Routes traffic based on content (e.g., path /api vs /app).
+
+Best for web applications, microservices, and APIs.
+
+Network Load Balancer (NLB)
+
+Operates at Layer 4 (TCP/UDP).
+
+Extremely fast, handles millions of requests per second.
+
+Best for gaming, IoT, or apps needing very low latency.
+
+Gateway Load Balancer (GWLB)
+
+Operates at Layer 3 (Network/Firewall level).
+
+Used for integrating third-party virtual appliances like firewalls, IDS, IPS.
+
+Classic Load Balancer (CLB) (legacy)
+
+Works at both Layer 4 & Layer 7 but is older, replaced by ALB & NLB.
+
+🔹 Example Flow
+
+User → Load Balancer (DNS endpoint).
+
+LB checks which backend instance is healthy.
+
+LB forwards request → EC2 instance.
+
+If an instance fails health check, LB stops sending traffic to it.
+
+🔹 What is a Target Group?
+
+A Target Group is a collection of resources (EC2, IP addresses, Lambda functions, or containers in ECS) that the Load Balancer routes traffic to.
+
+Think of it like a pool of servers behind your ALB.
+
+ALB doesn’t directly send requests to EC2 — it always sends them to a Target Group first.
+
+🔹 When you create a Target Group (TG)
+
+You’ll configure:
+
+1. Target Type
+
+This decides what kind of backend you are sending traffic to:
+
+Instances → Choose if your backend is EC2 instances.
+
+IP Addresses → Choose if you want to forward traffic to private IPs (maybe apps outside AWS but inside your VPC).
+
+Lambda → Choose if you want to send traffic to an AWS Lambda function.
+
+👉 In your case: Instances (since you’re using EC2).
+
+2. Protocol & Port
+
+This is how traffic is sent from the ALB to the target group:
+
+Protocol → Usually HTTP or HTTPS.
+
+Port → The backend port your application runs on.
+
+Example: If Apache/Nginx is serving web pages on port 80, choose HTTP:80.
+
+If you run a secure app with SSL, use HTTPS:443.
+
+👉 For a simple web server, choose HTTP:80.
+
+3. Health Checks
+
+This is how the Load Balancer decides if your EC2 instance is healthy (available) or unhealthy (remove from rotation).
+
+Protocol → HTTP (or HTTPS if secure).
+
+Path → The URL path ALB uses to check health.
+
+Default = / (root of your app).
+
+You can set /health or /status if your app has a health check endpoint.
+
+Success Codes → What status code means "healthy". Default is 200, but you can also allow 200-399.
+
+Interval → How often to check (default: 30 seconds).
+
+Timeout → How long to wait before marking it failed.
+
+Healthy Threshold → How many successful checks before marking healthy.
+
+Unhealthy Threshold → How many failures before marking unhealthy.
+
+👉 Example:
+
+ALB sends request: http://<EC2-IP>/
+
+If the response is 200 OK, the instance is healthy.
+
+If it fails (timeout, 500 error, no response), ALB marks it unhealthy and stops sending traffic to it.
+
+🔹 Flow Example
+
+Client sends request → http://my-alb-12345.ap-south-1.elb.amazonaws.com.
+
+ALB receives it on port 80.
+
+ALB forwards it to the Target Group.
+
+Target Group picks a healthy EC2 instance (round-robin by default).
+
+EC2 responds → traffic flows back to the client.
+
+✅ Why this matters
+
+Without a properly configured Target Group:
+
+ALB doesn’t know where to send requests.
+
+If health checks fail, ALB will think all instances are unhealthy → you’ll see 503 Service Unavailable errors.
