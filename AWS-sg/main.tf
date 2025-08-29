@@ -1,10 +1,3 @@
-data "aws_vpc" "custom" {
-  filter {
-    name   = "tag:Name"
-    values = ["vpc-basics"]   # <- Your VPC name
-  }
-}
-
 resource "aws_security_group" "SG" {
   name        = "security-group"
   description = "Allow SSH and HTTP"
