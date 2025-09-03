@@ -21,10 +21,15 @@ data "aws_subnet" "private" {
 data "aws_security_group" "existing_alb_sg" {
   id = "sg-038a76efce48b252d"   
 }
+
+
 data "aws_instance" "public_ec2" {
-  instance_id = "i-0830a711c3a14734f"   
+  instance_id = "i-038c231c6e1338bec"   
 }
 
 data "aws_instance" "private_ec2" {
-  instance_id = "i-0837821c1b1707595"   
+  instance_id = "i-00f7e96c621cee4cc"   
+}
+data "aws_security_group" "existing_ec2_sg" {
+  id = "sg-01e77f5a887c80311"   # your EC2 security group
 }
