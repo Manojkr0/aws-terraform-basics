@@ -68,7 +68,7 @@ resource "aws_lb" "app_alb" {
 }
 
 resource "aws_lb_target_group" "flask_targets" {
-  name_prefix = "flask-tg"
+  name_prefix = "flask"
   port        = 5000
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.custom.id
