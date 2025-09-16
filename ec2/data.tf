@@ -26,3 +26,17 @@ data "terraform_remote_state" "sg" {
     region = "us-west-2"
   }
 }
+
+data "aws_security_group" "existing_alb_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["security-group"]
+  }
+}
+
+data "aws_security_group" "existing_ec2_sg" {
+  filter {
+    name   = "tag:Name"
+    values = ["new-sg"]
+  }
+}
