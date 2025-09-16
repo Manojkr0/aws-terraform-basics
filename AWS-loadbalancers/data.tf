@@ -19,17 +19,29 @@ data "aws_subnet" "private" {
   vpc_id = data.aws_vpc.custom.id
 }
 data "aws_security_group" "existing_alb_sg" {
-  id = "sg-038a76efce48b252d"   
+  filter{
+    name   = "tag:Name"
+    values = ["security-group"]   
+  }
 }
 
 
 data "aws_instance" "public_ec2" {
-  instance_id = "i-038c231c6e1338bec"   
+  filter {
+    name   = "tag:Name"
+    values = ["Public-EC2"]   
+  }  
 }
 
 data "aws_instance" "private_ec2" {
-  instance_id = "i-00f7e96c621cee4cc"   
+  filter {
+    name   = "tag:Name"
+    values = ["Private-EC2"]   
+  } 
 }
 data "aws_security_group" "existing_ec2_sg" {
-  id = "sg-01e77f5a887c80311"   # your EC2 security group
+  filter {
+    name =   "tag:Name"
+    values = ["new-sg"]
+  }
 }

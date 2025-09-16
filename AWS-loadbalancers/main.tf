@@ -63,6 +63,16 @@ resource "aws_security_group_rule" "allow_alb_to_ec2" {
   security_group_id        = data.aws_security_group.existing_ec2_sg.id
 }
 
+# ✅ Add SSH access (only from your IP)
+resource "aws_security_group_rule" "allow_ssh_to_ec2" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["49.204.201.195/32"] # Replace with your IP
+  security_group_id = data.aws_security_group.existing_ec2_sg.id
+}
+
 resource "aws_instance" "flask_ec2" {
   ami           = "ami-0f918f7e67a3323f0"
   instance_type = "t2.micro"
@@ -73,7 +83,8 @@ resource "aws_instance" "flask_ec2" {
               #!/bin/bash
               yum update -y
               amazon-linux-extras enable python3.8
-              yum install -y python3.8 git
+              yum install -y python3.8 python3-pip git -y
+
               pip3 install flask
 
               cat <<EOPY > /home/ec2-user/app.py
@@ -88,6 +99,10 @@ resource "aws_instance" "flask_ec2" {
                   app.run(host='0.0.0.0', port=8000)
               EOPY
 
+              # Kill old Flask if running
+              pkill -f app.py || true
+
+              # Run Flask app
               nohup python3 /home/ec2-user/app.py > /home/ec2-user/app.log 2>&1 &
               EOF
 
@@ -135,6 +150,11 @@ resource "aws_lb_target_group" "targets" {
   lifecycle {
     create_before_destroy = true
   }
+}
+resource "aws_lb_target_group_attachment" "flask_ec2_attach" {
+  target_group_arn = aws_lb_target_group.targets.arn
+  target_id        = aws_instance.flask_ec2.id
+  port             = 8000
 }
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.AWS-ALB.arn
